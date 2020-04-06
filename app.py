@@ -109,8 +109,8 @@ def search_venues():
       "count": searched_venues.count(),
       "data": searched_venues
     }
-
-  return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+    
+    return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
