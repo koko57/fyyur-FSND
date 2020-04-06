@@ -69,8 +69,11 @@ class Show(db.Model):
 
 def format_datetime(value, format='medium'):
     print(value)
-    date = dateutil.parser.parse(value)
-    print(type(date))
+    print(type(value))
+    date = value
+    if type(value) != datetime:
+        date = dateutil.parser.parse(value)
+        print(type(date))
     if format == 'full':
         format="EEEE MMMM, d, y 'at' h:mma"
     elif format == 'medium':
@@ -114,6 +117,18 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   venue = Venue.query.filter_by(id=venue_id).first()
+  shows = Show.query.filter(Show.venue_id == venue_id).all()
+
+  for show in shows:
+    setattr(show, 'artist_name', show.artist.name)
+
+  upcoming_shows = list(filter(lambda x: x.start_time > datetime.now(), shows))
+  past_shows = list(filter(lambda x: x.start_time < datetime.now(), shows))
+
+  setattr(venue, 'upcoming_shows', upcoming_shows)
+  setattr(venue, 'upcoming_shows_count', len(upcoming_shows))
+  setattr(venue, 'past_shows', past_shows)
+  setattr(venue, 'past_shows_count', len(past_shows))
   return render_template('pages/show_venue.html', venue=venue)
 
 #  Create Venue
@@ -182,6 +197,19 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   artist = Artist.query.filter_by(id=artist_id).first()
+  shows = Show.query.filter(Show.artist_id == artist_id).all()
+
+  for show in shows:
+    setattr(show, 'venue_name', show.venue.name)
+
+  upcoming_shows = list(filter(lambda x: x.start_time > datetime.now(), shows))
+  past_shows = list(filter(lambda x: x.start_time < datetime.now(), shows))
+
+  setattr(artist, 'upcoming_shows', upcoming_shows)
+  setattr(artist, 'upcoming_shows_count', len(upcoming_shows))
+  setattr(artist, 'past_shows', past_shows)
+  setattr(artist, 'past_shows_count', len(past_shows))
+
   return render_template('pages/show_artist.html', artist=artist)
 
 #  Update
@@ -301,11 +329,14 @@ def create_artist_submission():
 
 @app.route('/shows')
 def shows():
-    # displays list of shows at /shows
-    # TODO: replace with real venues data.
-    #       num_shows should be aggregated based on number of upcoming shows per venue.
+    all_shows = Show.query.all()
 
-    return render_template('pages/shows.html', shows=allshows)
+    for show in all_shows:
+        setattr(show, 'artist_name', show.artist.name)
+        setattr(show, 'venue_name', show.venue.name)
+
+
+    return render_template('pages/shows.html', shows=all_shows)
 
 @app.route('/shows/create')
 def create_shows():
