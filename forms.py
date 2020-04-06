@@ -1,8 +1,9 @@
 from datetime import datetime
 from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, TextAreaField
+from wtforms.validators import DataRequired, AnyOf, URL, Length
 from choices import *
+
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -32,7 +33,7 @@ class VenueForm(Form):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone'
+        'phone', validators=[DataRequired()]
     )
     image_link = StringField(
         'image_link'
@@ -43,6 +44,16 @@ class VenueForm(Form):
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
+    )
+    website = StringField(
+        'website', validators=[URL()]
+    )
+    seeking_talent = SelectField(
+        'seeking_talent',
+        choices=[('', 'No'), ('True', 'Yes')]
+    )
+    seeking_description = TextAreaField(
+        'seeking_description', validators=[Length(max=500)]
     )
 
 class ArtistForm(Form):
@@ -57,8 +68,7 @@ class ArtistForm(Form):
         choices=states
     )
     phone = StringField(
-        # TODO implement validation logic for state
-        'phone'
+        'phone', validators=[DataRequired()]
     )
     image_link = StringField(
         'image_link'
@@ -70,5 +80,14 @@ class ArtistForm(Form):
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
     )
-
-# TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
+    website = StringField(
+        'website', validators=[URL()]
+    )
+    seeking_venue = SelectField(
+        'seeking_venue',
+        choices=[('', 'No'), ('True', 'Yes')]
+    )
+    seeking_description = TextAreaField(
+        'seeking_description', validators=[Length(max=500)]
+    )
+    
