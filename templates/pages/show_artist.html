@@ -9,6 +9,11 @@
 		<p class="subtitle">
 			ID: {{ artist.id }}
 		</p>
+		<p>
+			<a href="/artists/{{ artist.id }}/edit">
+				<i class="fas fa-edit"></i> Edit
+			</a>
+		</p>
 		<div class="genres">
 			{% for genre in artist.genres %}
 			<span class="genre">{{ genre }}</span>
